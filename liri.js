@@ -1,23 +1,26 @@
 require("dotenv").config();
+var axios = require("axios");
+var fs = require("fs");
 
 var Spotify = require("node-spotify-api");
 var spotify = new Spotify({id: process.env.SPOTIFY_ID, secret: process.env.SPOTIFY_SECRET});
 
-console.log(spotify);
+//console.log(spotify);
 
 var select = function(switchData, functionData) {
     switch(switchData) {
-        case 'spotify-this' :
+        case 'spotify-this-song' :
             getSpotify(functionData);
             break;
         case 'concert-this' :
-            getConcert();
+            getConcert(functionData);
+            console.log(functionData);
             break;
         case 'movie-this' :
-            getMovie();
+            getMovie(functionData);
             break;
-        case 'do-what it says' :
-            getDoIt();
+        case 'do-what-it-says' :
+            getDoIt(functionData);
             break;
         default:
         console.log("Liri does not understand that request!")
@@ -31,9 +34,8 @@ var getSpotify = function(songName){
     spotify
     .search({ type: 'track', query: songName })
     .then(function(response) {
-        debugger;
         var songs = response.tracks.items;
-        console.log(songs);
+        //console.log(songs);
         for (i = 0; i < songs.length; i++) {
             console.log(i+1);
             console.log("Artist(s): " + songs[i].artists.map(getArtistNames));
@@ -42,18 +44,75 @@ var getSpotify = function(songName){
             console.log("Album: " + songs[i].album.name);
             console.log("---------------------------------------------");
         }
-      
-        debugger;
-      
     })
     .catch(function(err) {
       console.log(err);
+    })
+}
+var getConcert = function(artistName) {
     
-      
-      
-      
-})
+    //****************/Accomodate multiple word artists*****************************
+    axios.get("https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp").then(
+    function(response) {
+    var res = response.data;
+    var venue;
+    var location;
+    var date;
+    
+    for( i = 0; i < res.length; i++) {
+        venue = res[i].venue.name;
+        location = res[i].venue.city + ", " + res[i].venue.region;
+        date = res[i].datetime
+        console.log("Venue: " + venue);
+        console.log("Location: " + location);
+        console.log("Date: " + date);
+        console.log("--------------------------------------")
+    }
+}
+);
+}
 
+var getMovie = function(movieName) {
+    if(movieName == undefined){
+        movieName = "Mr. Nobody";
+    }
+    axios.get("http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy").then(
+    function(response) {
+        var res = response.data;
+        var year = res.Year;
+        var imdbRating = res.imdbRating;
+        var country = res.Country;
+        var language = res.Language;
+        var plot = res.Plot;
+        var actors = res.Actors
+        var tomRating = "This movies has not been rated by Rotten Tomatoes";
+        for(i=0; i<res.Ratings.length; i++){
+            if (res.Ratings[i].Source == "Rotten Tomatoes") {
+                tomRating = res.Ratings[i].Value;
+            }
+        }        
+        console.log("Movie Name: " + movieName);
+        console.log("Year: " + year);
+        console.log("IMDB Rating: " + imdbRating);
+        console.log("Rotten Tomatoes Rating: " + tomRating);
+        console.log("Country: " + country);
+        console.log("Language: " + language);
+        console.log("Plot: " + plot);
+        console.log("Actor: " + actors);
+        console.log("--------------------------------------")
+    }
+);
+}
+
+var getDoIt = function(fileName) {
+    fs.readFile(fileName, "utf8", function(error, data) {
+        console.log(fileName);
+        if (error) {
+          return console.log(error);
+        }
+        var dataArr = data.split(",");
+        select(dataArr[0],dataArr[1]);
+      });
 }
 
  var runLiri = function(action, data){
