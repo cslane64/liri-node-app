@@ -51,7 +51,6 @@ var getSpotify = function(songName){
 }
 var getConcert = function(artistName) {
     
-    //****************/Accomodate multiple word artists*****************************
     axios.get("https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp").then(
     function(response) {
     var res = response.data;
@@ -60,16 +59,16 @@ var getConcert = function(artistName) {
     var date;
     
     for( i = 0; i < res.length; i++) {
-        venue = res[i].venue.name;
-        location = res[i].venue.city + ", " + res[i].venue.region;
-        date = res[i].datetime
-        console.log("Venue: " + venue);
-        console.log("Location: " + location);
-        console.log("Date: " + date);
-        console.log("--------------------------------------")
-    }
-}
-);
+            venue = res[i].venue.name;
+            location = res[i].venue.city + ", " + res[i].venue.region;
+            date = res[i].datetime
+            console.log("Venue: " + venue);
+            console.log("Location: " + location);
+            console.log("Date: " + date);
+            console.log("--------------------------------------")
+            }
+        }
+    );
 }
 
 var getMovie = function(movieName) {
@@ -78,7 +77,9 @@ var getMovie = function(movieName) {
     }
     axios.get("http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy").then(
     function(response) {
+        
         var res = response.data;
+        var title = res.Title;
         var year = res.Year;
         var imdbRating = res.imdbRating;
         var country = res.Country;
@@ -91,7 +92,7 @@ var getMovie = function(movieName) {
                 tomRating = res.Ratings[i].Value;
             }
         }        
-        console.log("Movie Name: " + movieName);
+        console.log("Movie Name: " + title);
         console.log("Year: " + year);
         console.log("IMDB Rating: " + imdbRating);
         console.log("Rotten Tomatoes Rating: " + tomRating);
@@ -101,6 +102,7 @@ var getMovie = function(movieName) {
         console.log("Actor: " + actors);
         console.log("--------------------------------------")
     }
+    
 );
 }
 
@@ -115,8 +117,16 @@ var getDoIt = function(fileName) {
       });
 }
 
+var nodeArgs = process.argv;
+var fullArg = process.argv[3];
+        for (var i = 3; i < nodeArgs.length; i++) {
+            if (i > 3 && i < nodeArgs.length) {
+                fullArg = fullArg + "+" + nodeArgs[i];
+            }
+        } 
+
  var runLiri = function(action, data){
      select(action, data);
  };
 
-runLiri(process.argv[2], process.argv[3]);
+runLiri(process.argv[2], fullArg);
