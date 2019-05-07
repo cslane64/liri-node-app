@@ -11,10 +11,11 @@ var select = function(switchData, functionData) {
     switch(switchData) {
         case 'spotify-this-song' :
             getSpotify(functionData);
+                
             break;
         case 'concert-this' :
             getConcert(functionData);
-            console.log(functionData);
+            
             break;
         case 'movie-this' :
             getMovie(functionData);
@@ -31,6 +32,9 @@ var getArtistNames = function(artist){
 }
 
 var getSpotify = function(songName){
+    if(songName == undefined) {
+        songName = "The Sign";
+    }
     spotify
     .search({ type: 'track', query: songName })
     .then(function(response) {
@@ -126,13 +130,7 @@ var getDoIt = function(fileName) {
 }
 
 var fullArg = process.argv.slice(3).join(' ');
-/* var nodeArgs = process.argv;
-var fullArg = process.argv[3];
-        for (var i = 3; i < nodeArgs.length; i++) {
-            if (i > 3 && i < nodeArgs.length) {
-                fullArg = fullArg + "+" + nodeArgs[i];
-            }
-        } */
+
 
  var runLiri = function(action, data){
      select(action, data);
