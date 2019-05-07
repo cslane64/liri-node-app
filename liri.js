@@ -35,7 +35,7 @@ var getSpotify = function(songName){
     .search({ type: 'track', query: songName })
     .then(function(response) {
         var songs = response.tracks.items;
-        //console.log(songs);
+       
         for (i = 0; i < songs.length; i++) {
             console.log(i+1);
             console.log("Artist(s): " + songs[i].artists.map(getArtistNames));
@@ -51,14 +51,17 @@ var getSpotify = function(songName){
 }
 var getConcert = function(artistName) {
     
-    axios.get("https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp").then(
+    axios.get("https://rest.bandsintown.com/artists/" + artistName + "/events?app_id=codingbootcamp")
+    .then(
     function(response) {
+        if (response.data.length == 0) {
+            console.log("This artist has no concerts scheduled!")
+        }
     var res = response.data;
     var venue;
     var location;
     var date;
-    
-    for( i = 0; i < res.length; i++) {
+    for ( i = 0; i < res.length; i++) {
             venue = res[i].venue.name;
             location = res[i].venue.city + ", " + res[i].venue.region;
             date = res[i].datetime
@@ -67,8 +70,11 @@ var getConcert = function(artistName) {
             console.log("Date: " + date);
             console.log("--------------------------------------")
             }
-        }
-    );
+        })
+    .catch(function(error) {
+       
+        console.log(error)
+    });
 }
 
 var getMovie = function(movieName) {
@@ -78,32 +84,34 @@ var getMovie = function(movieName) {
     axios.get("http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy").then(
     function(response) {
         
-        var res = response.data;
-        var title = res.Title;
-        var year = res.Year;
-        var imdbRating = res.imdbRating;
-        var country = res.Country;
-        var language = res.Language;
-        var plot = res.Plot;
-        var actors = res.Actors
-        var tomRating = "This movies has not been rated by Rotten Tomatoes";
-        for(i=0; i<res.Ratings.length; i++){
-            if (res.Ratings[i].Source == "Rotten Tomatoes") {
-                tomRating = res.Ratings[i].Value;
-            }
-        }        
-        console.log("Movie Name: " + title);
-        console.log("Year: " + year);
-        console.log("IMDB Rating: " + imdbRating);
-        console.log("Rotten Tomatoes Rating: " + tomRating);
-        console.log("Country: " + country);
-        console.log("Language: " + language);
-        console.log("Plot: " + plot);
-        console.log("Actor: " + actors);
-        console.log("--------------------------------------")
-    }
-    
-);
+            var res = response.data;
+            var title = res.Title;
+            var year = res.Year;
+            var imdbRating = res.imdbRating;
+            var country = res.Country;
+            var language = res.Language;
+            var plot = res.Plot;
+            var actors = res.Actors
+            var tomRating = "This movies has not been rated by Rotten Tomatoes";
+                for(i=0; i<res.Ratings.length; i++){
+                    if (res.Ratings[i].Source == "Rotten Tomatoes") {
+                        tomRating = res.Ratings[i].Value;
+                        }
+                    }        
+            console.log("Movie Name: " + title);
+            console.log("Year: " + year);
+            console.log("IMDB Rating: " + imdbRating);
+            console.log("Rotten Tomatoes Rating: " + tomRating);
+            console.log("Country: " + country);
+            console.log("Language: " + language);
+            console.log("Plot: " + plot);
+            console.log("Actor: " + actors);
+            console.log("--------------------------------------")
+        })
+        .catch(function(err){
+            console.log(err);
+        })
+
 }
 
 var getDoIt = function(fileName) {
@@ -117,16 +125,17 @@ var getDoIt = function(fileName) {
       });
 }
 
-var nodeArgs = process.argv;
+var fullArg = process.argv.slice(3).join(' ');
+/* var nodeArgs = process.argv;
 var fullArg = process.argv[3];
         for (var i = 3; i < nodeArgs.length; i++) {
             if (i > 3 && i < nodeArgs.length) {
                 fullArg = fullArg + "+" + nodeArgs[i];
             }
-        } 
+        } */
 
  var runLiri = function(action, data){
      select(action, data);
- };
+ }
 
 runLiri(process.argv[2], fullArg);
