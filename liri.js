@@ -32,14 +32,12 @@ var getArtistNames = function(artist){
 }
 
 var getSpotify = function(songName){
-    if(songName == undefined) {
-        songName = "The Sign";
-    }
+    
     spotify
+   
     .search({ type: 'track', query: songName })
     .then(function(response) {
         var songs = response.tracks.items;
-       
         for (i = 0; i < songs.length; i++) {
             console.log(i+1);
             console.log("Artist(s): " + songs[i].artists.map(getArtistNames));
@@ -82,12 +80,12 @@ var getConcert = function(artistName) {
 }
 
 var getMovie = function(movieName) {
-    if(movieName == undefined){
+    if(movieName == "") {
         movieName = "Mr. Nobody";
     }
+    
     axios.get("http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy").then(
     function(response) {
-        
             var res = response.data;
             var title = res.Title;
             var year = res.Year;
@@ -133,7 +131,12 @@ var fullArg = process.argv.slice(3).join(' ');
 
 
  var runLiri = function(action, data){
-     select(action, data);
+     if(action == 'spotify-this-song' && data == ''){
+        data = "The Sign"
+     }
+    select(action, data);
  }
+
+ 
 
 runLiri(process.argv[2], fullArg);
