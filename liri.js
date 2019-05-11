@@ -117,7 +117,7 @@ var getMovie = function(movieName) {
 }
 
 var getDoIt = function(fileName) {
-    fs.readFile(fileName, "utf8", function(error, data) {
+    fs.readFile("random.txt", "utf8", function(error, data) {
         console.log(fileName);
         if (error) {
           return console.log(error);
